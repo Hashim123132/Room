@@ -6,10 +6,11 @@ import MeetingSetup from "@/components/MeetingSetup";
 import { useGetCallById } from "@/hooks/useGetCallById";
 import { useUser } from "@clerk/nextjs";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
-import { useState } from "react";
+import React, { useState } from "react";
 
-const Meeting = ({params:{id}} : {params:{id:string}}) => {
- 
+const Meeting = ({ params }: { params: Promise<{ id: string }> }) => {
+   const { id } = React.use(params); 
+
   const {user, isLoaded} = useUser();
   const [isSetupComplete, setIsSetupComplete] = useState(false)
   //csutom hook to fetch call details by id

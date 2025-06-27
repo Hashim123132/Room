@@ -1,3 +1,5 @@
+//in this file we are basically making a room which shown to us just before connecting to meeting room 
+
 "use client"
 import { DeviceSettings, useCall, VideoPreview } from "@stream-io/video-react-sdk"
 import { useEffect, useState } from "react"
