@@ -1,7 +1,7 @@
 //in this file we are basically makeing meeting room literally.
 
 import { cn } from "@/lib/utils"
-import { CallControls, CallParticipantsList, CallStatsButton, PaginatedGridLayout, SpeakerLayout } from "@stream-io/video-react-sdk"
+import { CallControls, CallingState, CallParticipantsList, CallStatsButton, PaginatedGridLayout, SpeakerLayout, useCallStateHooks } from "@stream-io/video-react-sdk"
 import { useState } from "react"
 import {
   DropdownMenu,
@@ -11,32 +11,46 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LayoutList, Search, Users } from "lucide-react"
+import { LayoutList, Users } from "lucide-react"
 import { useSearchParams } from "next/navigation"
+import EndCallButton from "./EndCallButton"
+import Loader from "./Loader"
+
+
 
 // CallLayoutType can only be one of these two string values:
-type CallLayoutType = 'grid' | 'speaker-left'| 'speaker-right'
+  type CallLayoutType = 'grid' | 'speaker-left'| 'speaker-right'
 const MeetingRoom = () => {
-  const searchParams = useSearchParams()
-  const isPersonaRoom = !!searchParams.get('personal')
+    const searchParams = useSearchParams()
+    //by default it would give a string but when we used double negation it gave us the correct boolean
+    const isPersonaRoom = !!searchParams.get('personal')
+  
+    //setLayout only lowercases the speaker-left etc
+  const [layout, setLayout] = useState<CallLayoutType>('speaker-left')
+  const [showParticipants, setShowParticipants] = useState(false)
  
-  //setLayout only lowercases the speaker-left etc
- const [layout, setLayout] = useState<CallLayoutType>('speaker-left')
- const [showParticipants, setShowParticipants] = useState(false)
+  //gives info about call
+  const {useCallCallingState} = useCallStateHooks();  
+  const callingState = useCallCallingState();
  
- const CallLayout = ()=>{
-  switch (layout) {
-    case 'grid':
-      return <PaginatedGridLayout />
-    case 'speaker-right':
-      return <SpeakerLayout participantsBarPosition='left'/>
-      
-        default:
-      return <SpeakerLayout participantsBarPosition='right'/>
-      
+  if(callingState !== CallingState.JOINED){
+    <Loader />
   }
- }
  
+ 
+  const CallLayout = ()=>{
+    switch (layout) {
+      case 'grid':
+        return <PaginatedGridLayout />
+      case 'speaker-right':
+        return <SpeakerLayout participantsBarPosition='left'/>
+        
+          default:
+        return <SpeakerLayout participantsBarPosition='right'/>
+        
+    }
+  }
+  
  return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <div className="relative flex size-full items-center justify-center">
@@ -52,13 +66,13 @@ const MeetingRoom = () => {
             2) That will run setShowParticipants(false)
 
             3) Which will hide the participants list from the screen*/}
-            
+            {/* This below is a panel which shows when user Click on the the "show participant button" allowing us to see the panel which is hidden by default */}
             <CallParticipantsList onClose={()=>
               setShowParticipants(false)}
             />
           </div>
       </div>
-      <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
+      <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 flex-wrap">
         <CallControls />
         {/* used a custom dropmenu from shadcn ui library */}
         <DropdownMenu>
@@ -66,7 +80,10 @@ const MeetingRoom = () => {
             <DropdownMenuTrigger>
 
                   <LayoutList size={20}
-                  className="text-white cursor-pointer rounded-2xl  hover:bg-[#4c535b] h-[30px] w-[25px]"/>
+                 
+                    className="rounded-2xl  hover:bg-[#4c535b] h-[30px] w-[25px]"
+                 
+                 />
               </DropdownMenuTrigger>
           </div>
             <DropdownMenuContent className="border-dark-1 bg-dark-1 text-white">
@@ -86,15 +103,18 @@ const MeetingRoom = () => {
               ))}
            
           </DropdownMenuContent>
-        </DropdownMenu>
-        <CallStatsButton/>
-        <button onClick={()=>setShowParticipants((prev)=>!prev)}>
-              <div className="cursor-pointer rounded-2xl bg-[#19234d] hover:[#4c535b]">
-                <Users size={20} className='text-white'/>
-              </div>
-              
-        </button>
-        {!isPersonaRoom &&<EndCallButton />}
+            </DropdownMenu>
+            <CallStatsButton/>
+            {/* by default setShowParticipants have false value but here we inverse it */}
+            
+            {/* this is the button which we are seeing in the menu below for particpants clicking this will open panel of participants. */}
+            <button onClick={()=>setShowParticipants((prev)=>!prev)}>
+                  <div className="cursor-pointer rounded-2xl bg-[#19234d] hover:[#4c535b]">
+                    <Users size={20} className='text-white'/>
+                  </div>
+                  
+            </button>
+            {!isPersonaRoom &&<EndCallButton />}
       </div>
     </section>
   )
