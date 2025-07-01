@@ -1,3 +1,5 @@
+//this shows the dialog box for different meeting types like "New Meeting", "Join Meeting", etc.
+//the image code is optional
 "use client"
 
 import { ReactNode } from "react"
@@ -34,50 +36,50 @@ buttonIcon,
 handleClick,}:MeetingProps) => {
   return (
     
-    //Using shadcn for dialog box and they built in "open"property in which we have {isopen} prop which is serving as boolean
+    //Using shadcn for dialog box and they have a built in "open" property in which we have {isopen} prop which is serving as boolean
 
-        <Dialog  open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="flex w-full max-w-[520px] flex-col gap-6 border-none bg-dark-1 px-6 py-9 text-white">
-              <DialogHeader>
+          <Dialog  open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="flex w-full max-w-[520px] flex-col gap-6 border-none bg-dark-1 px-6 py-9 text-white">
+                  <DialogHeader>
 
 
-              <div className="flex flex-col gap-6">
-                {image &&(
-                  <div className="flex justify-center">
-                    <Image
-                    src={image}
-                    alt='image'
-                    height={72}
-                    width={72}
-                    />
+                  <div className="flex flex-col gap-6">
+                    {image &&(
+                      <div className="flex justify-center">
+                        <Image
+                        src={image}
+                        alt='image'
+                        height={72}
+                        width={72}
+                        />
+                      </div>
+                    )}
+                    <DialogTitle asChild>
+
+                        <h1 className={cn('text-3xl font-bold leading-[42px]', className)}>
+                          {title}
+                        </h1>
+                    </DialogTitle>
+                    {children}
+
+                    
+                    <Button className="bg-blue-1 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    onClick={handleClick}>
+                      {buttonIcon &&(
+                        <Image 
+                        src={buttonIcon}
+                        alt="button icon"
+                        width={13}
+                        height={13}
+                        />
+                      )}&nbsp;
+                    {buttonText || 'Schedule Meeting'}
+                    
+                    </Button>
                   </div>
-                )}
-                <DialogTitle asChild>
-
-                    <h1 className={cn('text-3xl font-bold leading-[42px]', className)}>
-                      {title}
-                    </h1>
-                </DialogTitle>
-                {children}
-
-                
-                <Button className="bg-blue-1 focus-visible:ring-0 focus-visible:ring-offset-0"
-                onClick={handleClick}>
-                  {buttonIcon &&(
-                    <Image 
-                    src={buttonIcon}
-                    alt="button icon"
-                    width={13}
-                    height={13}
-                    />
-                  )}&nbsp;
-                {buttonText || 'Schedule Meeting'}
-                
-                </Button>
-              </div>
-          </DialogHeader>
-        </DialogContent>
-        </Dialog>  
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>  
     )
 }
 export default MeetingModal
