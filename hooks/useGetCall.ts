@@ -83,10 +83,12 @@ export const useGetCalls = ()=>{
 
     //An array of past or ended meetings these meetings will be in object. that is the value it holds
     const endedCalls= calls.filter(({state: {startsAt, endedAt}}: Call)=>{
+         //if its lesser than now(current date and time) then meeting is already started or the time is ended(ended === true) then it is a meeting that has ended
         return( startsAt && new Date (startsAt)< now || !!endedAt)                                                 
     })
      
     const upcomingCalls= calls.filter(({state: {startsAt}}: Call)=>{
+        //if its greater than now(current date and time) then it is upcoming call
         return( startsAt && new Date (startsAt) > now )                                                 
     }) 
 

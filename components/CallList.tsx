@@ -4,7 +4,7 @@
 import { useGetCalls } from "@/hooks/useGetCall"
 import { Call, CallRecording } from "@stream-io/video-react-sdk"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import MeetingCard from "./MeetingCard"
 import Loader from "./Loader"
 
@@ -47,6 +47,20 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
     }
  }
 
+ useEffect(() => {
+  const fetchRecordings = async ()=>{
+    const callData = await Promise.all(callRecordings?.map((meeting) => meeting.queryRecordings()) ?? [],);
+    //[[rec1],[rec2],[rec3]]
+    const recordings = callData.filter(call =>call.recordings.length > 0) .flatMap(call => call.recordings)
+     // flatMap do this [ rec1, rec2, rec3 ]
+
+     setRecordings(recordings);
+  }
+
+  if(type === 'recordings') fetchRecordings();
+
+},[type, callRecordings])
+
  if(isLoading) return <Loader />
  //calls holds value of array like endedCalls etc
  const calls = getCalls();
@@ -66,7 +80,9 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
             }
            title={ (meeting as Call).state?.custom?.description || (meeting as CallRecording).filename?.substring(0, 20) ||
                    'No Description'}
-           date={(meeting as Call).state.startsAt?.toLocaleString() || (meeting as CallRecording).start_time.toLocaleString()}   //startsAt and starts_time is equal
+           
+            date={  type === 'recordings' ?  (meeting as CallRecording).start_time.toLocaleString() : (meeting as Call).state?.startsAt?.toLocaleString() ||  'No Date'}   //startsAt and starts_time is equal
+           
            // If the meeting is a recording:
            handleClick={type === 'recordings' ? ()=> router.push(`${(meeting as CallRecording).url}`) : 
            //If the meeting is an upcoming or ended call:
