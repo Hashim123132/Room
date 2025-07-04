@@ -17,7 +17,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       classNames: {
         toast:
           "!bg-[rgb(28,31,46)] text-white shadow-lg border border-white flex flex-col items-center",
-        title: "!font-extrabold !text-center",
+        title: "!font-extrabold !text-center !text-[15px]",
         description: "group-[.toast]:text-muted-foreground  !bg-[rgb(28,31,46)]",
         actionButton:
           "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
