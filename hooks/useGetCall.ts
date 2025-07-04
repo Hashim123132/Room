@@ -96,6 +96,7 @@ export const useGetCalls = ()=>{
     return{
         endedCalls,
         upcomingCalls,
+        //callRecordings will have whole array of calls which has happened or going to happen not applying any condition over it because it does not have a recording for a call which is ongoing
         callRecordings: calls,
         isLoading
     }

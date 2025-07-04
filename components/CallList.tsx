@@ -7,10 +7,13 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import MeetingCard from "./MeetingCard"
 import Loader from "./Loader"
+import { toast } from "sonner"
 
 const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
   const {endedCalls, upcomingCalls, callRecordings, isLoading}=  useGetCalls()
-  //since recordings is different from upcoming and previous therefore we are going to make it here
+  //since recordings is different from upcoming and previous therefore we are going to make it here and not in custom hook useGetCalls
+  //moreover CallRecordings is another stream interface similar to "Call[]"interface it also gives a blueprint for storing recording only 
+
   const [recordings, setRecordings] = useState<CallRecording[]>([])
   const router = useRouter();
   
@@ -48,13 +51,56 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
  }
 
  useEffect(() => {
+  try {
+    
+  } catch (error) {
+    
+  }
   const fetchRecordings = async ()=>{
-    const callData = await Promise.all(callRecordings?.map((meeting) => meeting.queryRecordings()) ?? [],);
-    //[[rec1],[rec2],[rec3]]
-    const recordings = callData.filter(call =>call.recordings.length > 0) .flatMap(call => call.recordings)
-     // flatMap do this [ rec1, rec2, rec3 ]
+    //"?? = If the result of callRecordings?.map(...) is null or undefined, use [] (empty array) instead
+    /*
+    For all Call objects in callRecordings, fetch their recordings only in parallel"
+    If callRecordings is missing, use an empty array (so nothing breaks)
+    callData becomes an array of { recordings: CallRecording[]  
+    */ 
+//Fetch a list of video calls from the server that match specific filter and sorting conditions. and we know these conditions are specified in calls thats the reason we use queryRecordings method on calls.
+   try {
+     const callData = await Promise.all(callRecordings?.map((meeting) => meeting.queryRecordings()) ?? [],);
+
+      // sample structure of what queryRecordings gives
+
+  //      recordings: [
+  //   {
+  //     id: "rec_1234567890",
+  //     url: "https://cdn.stream.io/recordings/rec_1234567890.mp4",
+  //     start_time: new Date("2025-07-02T10:00:00Z"),
+  //     end_time: new Date("2025-07-02T10:30:00Z"),
+  //     duration: 1800, // in seconds
+  //     filename: "Meeting-July-2-2025.mp4",
+  //     size: 50240000, // in bytes
+  //     mime_type: "video/mp4",
+  //     created_at: new Date("2025-07-02T10:31:00Z"),
+  //     type: "composite", // or "audio", etc.
+  //     resolution: "1280x720"
+  //     // ... more fields may exist depending on API version
+  //   },
+
+
+  
+  // ]
+
+
+
+
+    //[[{rec1}],[{rec2}],[{rec3}]]
+    const recordings = callData.filter(recordingData => recordingData.recordings.length > 0) .flatMap(recordingData => recordingData .recordings)
+     // flatMap do this [ {rec1}, {rec2}, {rec3} ]
 
      setRecordings(recordings);
+   } catch (error) {
+    toast('Try again Later')
+    
+   }
   }
 
   if(type === 'recordings') fetchRecordings();
@@ -121,9 +167,10 @@ export default CallList
 
 //CallRecording data structure
 
-// CallRecording = {
-//   url: string;
-//   start_time: Date;
-//   end_time: Date;
-//   ...
+// {
+//   url: "https://.../recording.mp4",
+//   start_time: Date,
+//   end_time: Date,
+//   duration: number,
+//   ...etc
 // }
