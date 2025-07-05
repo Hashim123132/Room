@@ -1,39 +1,50 @@
-'use client'
+'use client';
 
-import Loader from "@/components/Loader";
-import MeetingRoom from "@/components/MeetingRoom";
-import MeetingSetup from "@/components/MeetingSetup";
-import { Alert } from "@/components/ui/alert";
-import { useGetCallById } from "@/hooks/useGetCallById";
-import { useUser } from "@clerk/nextjs";
-import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
-import React, { useState } from "react";
+import { useState } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { StreamCall, StreamTheme } from '@stream-io/video-react-sdk';
+import { useParams } from 'next/navigation';
+import { Loader } from 'lucide-react';
 
-type MeetingProps = {
-  params: {
-    id: string;
-  };
-};
+import { useGetCallById } from '@/hooks/useGetCallById';
+import MeetingSetup from '@/components/MeetingSetup';
+import MeetingRoom from '@/components/MeetingRoom';
+import Alert from '@/components/Alert';
 
-const Meeting = ({ params }: MeetingProps) => {
-  const { id } = params;
+const MeetingPage = () => {
+  const params = useParams();
+  const id = params?.id;
 
-  const { user, isLoaded } = useUser();
+  // Safety check: if id is missing or invalid
+  if (!id || typeof id !== 'string') {
+    return (
+      <p className="text-center text-3xl font-bold text-white">
+        Invalid Meeting ID
+      </p>
+    );
+  }
+
+  const { isLoaded, user } = useUser();
+  const { call, isCallLoading } = useGetCallById(id); 
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
-  // custom hook to fetch call details by id
-  const { call, isCallLoading } = useGetCallById(id);
-
   if (!isLoaded || isCallLoading) return <Loader />;
- 
-  if (!call) return (
-    <p className="text-center text-3xl font-bold text-white">
-      Call Not Found
-    </p>
-  );
-    const notAllowed = call.type === 'invited' && (!user || !call.state.members.find((m) => m.user.id === user.id));
 
-  if (notAllowed) return <Alert title="You are not allowed to join this meeting" />;
+  if (!call) {
+    return (
+      <p className="text-center text-3xl font-bold text-white">
+        Call Not Found
+      </p>
+    );
+  }
+
+  const notAllowed =
+    call.type === 'invited' &&
+    (!user || !call.state.members.find((m) => m.user.id === user.id));
+
+  if (notAllowed) {
+    return <Alert title="You are not allowed to join this meeting" />;
+  }
 
   return (
     <main className="h-screen w-full">
@@ -50,4 +61,4 @@ const Meeting = ({ params }: MeetingProps) => {
   );
 };
 
-export default Meeting;
+export default MeetingPage;
