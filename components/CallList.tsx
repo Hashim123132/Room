@@ -60,7 +60,7 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
 
     const flattenedRecordings = callData.flat(); // flatten [[rec1, rec2], [rec3]]
     setRecordings(flattenedRecordings);
-  } catch (error) {
+  } catch (_) {
     toast('Try again later');
   }
 };
@@ -84,8 +84,7 @@ const sourceCall = isRecording
   ? (meeting as CallRecording & { __originalCall?: Call }).__originalCall
   : (meeting as Call);
   // Get participants from source call
-  const normalizedParticipants = sourceCall
-  ? getNormalizedParticipants(sourceCall, user)
+  const normalizedParticipants = sourceCall ? getNormalizedParticipants(sourceCall, user)
     : [];
 
   return (
@@ -122,7 +121,7 @@ const sourceCall = isRecording
               : `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${(meeting as Call).id}`
           }
              participants={normalizedParticipants}
-
+             type={type}
         />
       );
     })

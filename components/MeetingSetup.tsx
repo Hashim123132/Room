@@ -13,17 +13,18 @@ if(!call){
   throw new Error('useCall must be used within StreamCall component')
 }
 //by default you join with mic and camera enabled until u click on a checkbox which allows you to join without it
-  useEffect(()=>{
-    if(isMicCamToggledOn){
-      call?.camera.disable();
-      call?.microphone.disable();
-    
-    }else{
-      call?.camera.enable();
-      call?.microphone.enable();
-
+const camera = call?.camera;
+const microphone = call?.microphone;  
+  
+useEffect(() => {
+    if (isMicCamToggledOn) {
+      camera?.disable();
+      microphone?.disable();
+    } else {
+      camera?.enable();
+      microphone?.enable();
     }
-  }, [isMicCamToggledOn])
+  }, [isMicCamToggledOn, camera, microphone]);
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-3 text-white">
       <h1 className="text-2xl font-bold">Setup</h1>
