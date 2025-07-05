@@ -60,7 +60,7 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
 
     const flattenedRecordings = callData.flat(); // flatten [[rec1, rec2], [rec3]]
     setRecordings(flattenedRecordings);
-  } catch (_) {
+  } catch{
     toast('Try again later');
   }
 };
