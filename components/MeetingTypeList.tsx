@@ -11,6 +11,7 @@ import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk'
 import { toast } from "sonner"
 import { Textarea } from './ui/textarea'
 import ReactDatePicker from 'react-datepicker'
+import { Input } from './ui/input'
 
 const  MeetingTypeList = () => {
   
@@ -210,16 +211,38 @@ Access call metadata (id, participants, custom fields, etc.)
       )}
       <MeetingModal 
 
-      // if meetingState have precisely this 'isInstantMeeting' value then make "isOpen" true in Meeting Modal we have used this as prop(goto meetingModal)
-      isOpen={meetingState === 'isInstantMeeting'}
+        // if meetingState have precisely this 'isInstantMeeting' value then make "isOpen" true in Meeting Modal we have used this as prop(goto meetingModal)
+        isOpen={meetingState === 'isInstantMeeting'}
 
-      onClose={()=> setMeetingState(undefined)}
-      title='Start an Instant Meeting'
-      className='text-center'
-      buttonText='Start Meeting'
-      handleClick={createMeeting}
+        onClose={()=> setMeetingState(undefined)}
+        title='Start an Instant Meeting'
+        className='text-center'
+        buttonText='Start Meeting'
+        handleClick={createMeeting}
       />
-     </section>
+      
+      <MeetingModal 
+
+        isOpen={meetingState === 'isJoiningMeeting'}
+
+        onClose={()=> setMeetingState(undefined)}
+        title='Start an Instant Meeting'
+        className='text-center'
+        buttonText='Start Meeting'
+        handleClick={()=>router.push(values.link)}
+      >
+        
+        <Input 
+        placeholder='Meeting Link'
+        className='border-none bg-dark-3 focus-visible:ring-0 focus-visible:ring-offset-0'
+        onChange={(e) =>setValues({...values, link: e.target.value})}
+        />
+
+        
+        
+         </MeetingModal>
+
+     </section> 
   )
 }
 export default  MeetingTypeList

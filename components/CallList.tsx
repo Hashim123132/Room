@@ -58,17 +58,15 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
   }
   const fetchRecordings = async ()=>{
     //"?? = If the result of callRecordings?.map(...) is null or undefined, use [] (empty array) instead
+    //queryRecordings is a method of CallRecording interface which fetches recordings of that call by sorting through the callRecordings array( this array has calls value inside it)
     /*
     For all Call objects in callRecordings, fetch their recordings only in parallel"
     If callRecordings is missing, use an empty array (so nothing breaks)
     callData becomes an array of { recordings: CallRecording[]  
     */ 
-//Fetch a list of video calls from the server that match specific filter and sorting conditions. and we know these conditions are specified in calls thats the reason we use queryRecordings method on calls.
    try {
      const callData = await Promise.all(callRecordings?.map((meeting) => meeting.queryRecordings()) ?? [],);
-
       // sample structure of what queryRecordings gives
-
   //      recordings: [
   //   {
   //     id: "rec_1234567890",
@@ -84,14 +82,7 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
   //     resolution: "1280x720"
   //     // ... more fields may exist depending on API version
   //   },
-
-
-  
   // ]
-
-
-
-
     //[[{rec1}],[{rec2}],[{rec3}]]
     const recordings = callData.filter(recordingData => recordingData.recordings.length > 0) .flatMap(recordingData => recordingData .recordings)
      // flatMap do this [ {rec1}, {rec2}, {rec3} ]
@@ -119,7 +110,12 @@ const CallList = ({type}:{type:'ended' | 'upcoming' | 'recordings'}) => {
       {calls && calls.length > 0 ? calls.map((meeting: Call| CallRecording )=>(
       //  this component has props which makes us reuse the MeetingCard componennt
        <MeetingCard
-          key={(meeting as Call).id} 
+          key={
+            (meeting as Call)?.id ??
+            (meeting as CallRecording)?.url ??
+            meeting 
+    } 
+          
             icon={
               //if type is ended then use previous icon and vice versa
               type === 'ended' ? '/icons/previous.svg' : type === 'upcoming' ? '/icons/upcoming.svg': '/icons/recordings.svg'
