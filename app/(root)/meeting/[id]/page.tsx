@@ -15,7 +15,11 @@ const MeetingPage = () => {
   const params = useParams();
   const id = params?.id;
 
-  // Safety check: if id is missing or invalid
+  const { isLoaded, user } = useUser();
+  const { call, isCallLoading } = useGetCallById(id as string);
+  const [isSetupComplete, setIsSetupComplete] = useState(false);
+
+  // Now do the checks
   if (!id || typeof id !== 'string') {
     return (
       <p className="text-center text-3xl font-bold text-white">
@@ -23,10 +27,6 @@ const MeetingPage = () => {
       </p>
     );
   }
-
-  const { isLoaded, user } = useUser();
-  const { call, isCallLoading } = useGetCallById(id); 
-  const [isSetupComplete, setIsSetupComplete] = useState(false);
 
   if (!isLoaded || isCallLoading) return <Loader />;
 
