@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
+//shows the image on tab
 export const metadata: Metadata = {
   title: "Room",
   description: "Video Calling App",
@@ -36,7 +36,7 @@ export default function RootLayout({
       <ClerkProvider
         appearance={{
           layout:{
-            logoImageUrl:'/icons/logo.svg',
+            logoImageUrl:'/icons/room-logo.svg',
             socialButtonsVariant:'iconButton',
           },
           variables:{

@@ -14,8 +14,7 @@ interface MeetingCardProps {
   buttonText?: string;
   handleClick: () => void;
   link: string;
-  participants: string[]; // just for count, no avatar display
-    type?: 'ended' | 'upcoming' | 'recordings'; // <-- NEW
+  
 
 }
 
@@ -30,8 +29,6 @@ const MeetingCard = ({
   isPreviousMeeting,
   buttonText,
   link,
-  type,
-   participants = [],
 
 }:MeetingCardProps) => {
   return (
@@ -49,9 +46,7 @@ const MeetingCard = ({
      
    <article className="flex justify-between items-center w-full">
  <p className="text-sm text-gray-400">
-  {type === 'upcoming'
-    ? 'Meeting soon be live on the scheduled date!'
-    : `${participants.length} ${participants.length === 1 ? 'person has' : 'people have'} joined`}
+  {isPreviousMeeting ? 'Previous meeting' : 'Upcoming meeting'}
 </p>
 
   {!isPreviousMeeting && (
