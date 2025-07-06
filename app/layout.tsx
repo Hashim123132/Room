@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 //shows the image on tab
 export const metadata: Metadata = {
-  title: "Room",
+  title: "ROOM",
   description: "Video Calling App",
   icons:{
     icon: '/icons/logo.svg'
